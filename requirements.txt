@@ -6,3 +6,8 @@ GitHub-Flask
 pip install GitHub-Flask
 PyGithub
 pip install PyGithub
+======================
+for database
+pygments
+peewee
+
