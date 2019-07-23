@@ -1,1 +1,4 @@
 flask
+pip install flask
+flask-outh
+pip install git+https://github.com/mitsuhiko/flask-oauth
