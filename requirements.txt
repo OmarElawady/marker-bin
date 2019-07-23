@@ -2,3 +2,7 @@ flask
 pip install flask
 flask-outh
 pip install git+https://github.com/mitsuhiko/flask-oauth
+GitHub-Flask
+pip install GitHub-Flask
+PyGithub
+pip install PyGithub
