@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<div class="pnewpaste" >
+<strong><p>New Paste :</p></strong>
+</div>
+
+     <div>
+			<textarea name="paste_code" class="paste_textarea" rows="10"  style="overflow: hidden; overflow-wrap: break-word; resize: horizontal; height: 250px;"></textarea>
+		</div>
+
+<hr>
+
+<div class="p" >
+<strong><p>Optional Paste Settings :</p></strong>
+</div>
+
+   <label for="syntaxhighlighting"> Syntax Highlighting: </label>
+
+    <select id="syntaxhighlighting" name="syntaxhighlighting">
+     <option value="">None</option>
+      <option value="c">c</option>
+      <option value="CSHARP">c#</option>
+      <option value="cplusplus">c++</option>
+      <option value="HTML5">HTML5</option>
+      <option value="CSS">css</option>
+      <option value="python">python</option>
+      </select>
+   
+
+     <input type="submit" value="New Paste">
+  </form>
+</div>
+
+{% endblock %}
