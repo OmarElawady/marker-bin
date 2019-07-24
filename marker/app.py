@@ -4,7 +4,7 @@ import requests
 from flask_oauth import OAuth
 from flask_github import GitHub
 from github import Github as git
-
+from model.py import *
 # You must configure these 3 values from Google APIs console
 # https://code.google.com/apis/console
 GOOGLE_CLIENT_ID = '42073104430-pmelurs143kkkm5mbh1cqd58o7kptgsg.apps.googleusercontent.com'
@@ -48,20 +48,24 @@ def getUser():
 def getUserName():
     user=getUser();
     if user is not None:
-        return user['name']
+        return user.get('name')
     return None
 
 def getUserEmail():
     user=getUser();
     if user is not None:
-        return user['email']
+        return user.get('email')
     return None
 
 def getUserPicture():
     user=getUser();
     if user is not None:
-        return user['picture']
+        return user.get('picture')
     return None
+
+def checkForUser():
+    if not check_for_user_by_email(getUserEmail()):
+        add_user(getUserName(), None, getUserEmail())
 
 @app.route('/logout')
 def logout():
@@ -74,6 +78,22 @@ def index():
     if user is not None:
         return getUserName()+ getUserEmail()+getUserPicture()
     return "None"
+
+@app.route('/loginEmail',methods = ['POST', 'GET'])
+def loginEmail():
+    if request.method=='POST':
+        userName=request.form['username']
+        password=request.form['pass']
+        if check_for_user_by_username(userName):
+            truePass = login_by_username(userName, password)[0]
+            if truePass:
+                session['user']={'name':userName}
+                return redirect(url_for('index'))
+            flash('wrong user or pass try again')
+            return redirect(url_for('loginEmail'))
+        flash('welcome new user')
+        session['user'] = {'name': userName}
+        return redirect(url_for('index'))
 
 @app.route('/loginGit')
 def loginGit():
@@ -90,6 +110,7 @@ def authorizedGit(oauth_token):
     userData={"email":user.get_emails()[0]['email'],"name":user.login,"picture":user.avatar_url}
     print(type(userData))
     session['user']=userData
+    checkForUser()
     return userData
 
 
@@ -108,6 +129,7 @@ def authorizedGoogle(resp):
     res = requests.get('https://www.googleapis.com/oauth2/v1/userinfo',headers= headers)
     data=res.json()
     session['user']=data
+    checkForUser()
     return data
 
 

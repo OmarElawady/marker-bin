@@ -86,19 +86,14 @@ body {
 <div class="p" >
 <strong><p> login Form</p></strong>
 </div>
-   <div >
-               Username:
-             <input type="text" name="user_name" maxlength="20" size="20" value="" placeholder="Your username" class="post_input width_390">
-                                                    </div> <br><br>
 
-<div >
-          Password:
-     <input type="password" name="user_password" size="20" value="" placeholder="Your password" class="post_input width_390">
-        </div>
-
- <div class="form_right">
-          <input name="submit" type="submit" value="Create My Account" class="button">
-        </div>
+      <form action = "http://localhost:5000/loginEmail" method = "post">
+         <p>Enter Name:</p>
+         <p><input type = "text" name = "username" /></p>
+          <p>Enter password</p>
+          <p><input type="password" name="pass"></p>
+         <p><input type = "submit" value = "login" /></p>
+      </form>
     <hr>
 <h3> OR login with any of these social media accounts:  </h3>
 
