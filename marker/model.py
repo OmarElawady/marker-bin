@@ -24,7 +24,7 @@ def create_tables():
 
 
 
-def mark_text(src_text, src_language):#pass
+def mark_text(src_text, src_language):
     """return the marked text"""
     #styles >> HtmlFormatter().get_style_defs('.highlight')
     lexer = get_lexer_by_name(src_language, stripall=True)
@@ -33,23 +33,23 @@ def mark_text(src_text, src_language):#pass
 
 
 
-def get_srcs_by_username(user_username):#pass
+def get_srcs_by_username(user_username):
     """return list for all the quaries the username has"""
     quaries = Src.select().join(User).where(User.username == user_username)
     return list(quaries)
 
 
 
-def get_src_by_id(src_id):#pass
+def get_src_by_id(src_id):
     """retuen a tuple have the text and the language of the code"""
     try:
         quary = Src.select().where(Src.id == src_id).get()
         return quary.text, quary.language
     except Src.DoesNotExist:
-        return 'code not found'
+        return None
 
 
-def check_for_user_by_username(user_username):#pass
+def check_for_user_by_username(user_username):
     """check for existing return boolen"""
     query = User.select().where(User.username == user_username)
     if query.exists():
@@ -69,37 +69,35 @@ def check_for_user_by_email(user_email):
 
 
 
-def add_user(user_username, user_password, user_email):#pass
+def add_user(user_username, user_password, user_email):
     """save new user to the database"""
     user = User(username=user_username, password= user_password, email=user_email)
     user.save()
-    return f'{user_username} is created'
 
 
 
 
-def add_src(src_text, src_language, src_owner):#pass
+def add_src(src_text, src_language, src_owner):
     """save source code text in the database"""
     src = Src(text=src_text, language=src_language, owner=src_owner)
     src.save()
-    return 'code is created'
 
 
 
-def login_by_username(user_username, user_password):#pass
+def login_by_username(user_username, user_password):
     """give the access for the user to Email"""
     try:
         quary = User.select().where(User.username == user_username , User.password==user_password).get()
-        return True,'Welcome'
+        return True
     except User.DoesNotExist:
-        return False,'Incorrect username or password'
+        return False
 
 
 
-def login_by_email(user_email, user_password): #pass
+def login_by_email(user_email, user_password):
     """give the access for the user to Email"""
     try:
         quary = User.select().where(User.email == user_email , User.password==user_password).get()
-        return True,'Welcome'
+        return True
     except User.DoesNotExist:
-        return False,'Incorrect email or password'
+        return False
