@@ -1,9 +1,7 @@
 
 from flask import *
-import json
+import json,requests
 from flask_oauth import OAuth
-from urllib.request import *
-from urllib.error import *
 from flask_github import GitHub
 from github import Github as git
 from peewee import *
@@ -33,7 +31,6 @@ def create_tables():
 def mark(text):
     #styles >> HtmlFormatter().get_style_defs('.highlight')
     return pygments.highlight(text, PythonLexer(), HtmlFormatter())
-
 
 # You must configure these 3 values from Google APIs console
 # https://code.google.com/apis/console
@@ -73,11 +70,7 @@ consumer_key=GOOGLE_CLIENT_ID,
 consumer_secret=GOOGLE_CLIENT_SECRET)
 
 def getUser():
-    user = session.get('user')
-    if user is not None:
-        user=json.loads(user.replace('\'','\"'))
-        return user
-    return None
+    return session.get('user')
 
 def getUserName():
     user=getUser();
@@ -122,8 +115,8 @@ def authorizedGit(oauth_token):
     g=git(oauth_token)
     user=g.get_user()
     userData={"email":user.get_emails()[0]['email'],"name":user.login,"picture":user.avatar_url}
-    session['user']=str(userData)
-    print( session['user'])
+    print(type(userData))
+    session['user']=userData
     return userData
 
 
@@ -139,18 +132,8 @@ def authorizedGoogle(resp):
     access_token=access_token,''
     access_token = access_token[0]
     headers = {'Authorization': 'OAuth ' + access_token}
-    req = Request('https://www.googleapis.com/oauth2/v1/userinfo',None, headers)
-    try:
-        res = urlopen(req)
-    except URLError as e:
-        return str(e)
-    userData=''
-    for lines in res.readlines():
-        userData+=str(lines)
-    data = userData.replace('b\'', '')
-    data = data.replace('\\n','')
-    data = data.replace('\'', '')
-    print(data)
+    res = requests.get('https://www.googleapis.com/oauth2/v1/userinfo',headers= headers)
+    data=res.json()
     session['user']=data
     return data
 
