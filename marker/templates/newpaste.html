@@ -1,81 +1,14 @@
-<html>
-<head>
-	<title>MyProfile</title>
-	<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-
-/* Style the navigation bar links */
-.navbar a {
-  float: left;
-  display: block;
-  color: white;
-  text-align: center;
-  padding: 10px 20px;
-  text-decoration: none;
-}
-
-/* Right-aligned link */
-.navbar a.right {
-  float: right;
-}
-
-/* Style the top navigation bar */
-.navbar {
-  overflow: hidden;
-  background-color: #333;
-}
-
-/* Style the body */
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  margin: 0;
-}
-
-.p{ font-size: 20px;
-}
-
-input[type=submit] {
-  width: 10%;
-  background-color: #4CAF50;
-  color: white;
-  padding: 14px 20px;
-  margin: 8px 0;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
- select {
-  width: 25%;
-  padding: 8px 20px;
-  margin: 12px 17px;
-  display: inline-block;
-  text-align: center;
-
-  
-  
-  
-}
-
-</style>
+{% extends "base.html" %}
 
 
-</head>
-   <body>
-<div class="navbar">
-			<a href="home.html">PasteBin</a>
-		       <a href="newpaste.html">New paste</a>
-			         <a href="login.html" class="right">login</a>
-					       <a href="profile.html" class="right">MyPastebin</a>
-                  </div>
+{% block content %}
 
-<div class="p" >
+<div class="pnewpaste" >
 <strong><p>New Paste :</p></strong>
 </div>
 
      <div>
-			<textarea name="paste_code" class="paste_textarea" rows="10" id="paste_code" onkeydown="return catchTab(this,event)" style="overflow: hidden; overflow-wrap: break-word; resize: horizontal; height: 250px;"></textarea>
+			<textarea name="paste_code" class="paste_textarea" rows="10"  style="overflow: hidden; overflow-wrap: break-word; resize: horizontal; height: 250px;"></textarea>
 		</div>
 
 <hr>
@@ -83,7 +16,7 @@ input[type=submit] {
 <div class="p" >
 <strong><p>Optional Paste Settings :</p></strong>
 </div>
-<div>
+
    <label for="syntaxhighlighting"> Syntax Highlighting: </label>
 
     <select id="syntaxhighlighting" name="syntaxhighlighting">
@@ -97,16 +30,8 @@ input[type=submit] {
       </select>
    
 
-    
- 
-
-    
-  
-    <input type="submit" value="New Paste">
+     <input type="submit" value="New Paste">
   </form>
 </div>
 
-
-
-
-</body></html>
+{% endblock %}

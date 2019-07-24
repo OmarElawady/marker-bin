@@ -6,34 +6,6 @@ from urllib.request import *
 from urllib.error import *
 from flask_github import GitHub
 from github import Github as git
-from peewee import *
-import pygments
-from pygments.lexers import PythonLexer
-from pygments.formatters import HtmlFormatter
-
-database = SqliteDatabase('app.db')
-
-class BaseMode(Model):
-    class Meta:
-        database = database
-
-class User(BaseMode):
-    username = CharField( unique = True)
-    password = CharField()
-    email = CharField()
-
-class Src(BaseMode):
-    text = TextField()
-    language  = CharField()
-    user = ForeignKeyField(User, backref='srcs')
-
-def create_tables():
-    database.create_tables([User, Src])
-
-def mark(text):
-    #styles >> HtmlFormatter().get_style_defs('.highlight')
-    return pygments.highlight(text, PythonLexer(), HtmlFormatter())
-
 
 # You must configure these 3 values from Google APIs console
 # https://code.google.com/apis/console
@@ -102,7 +74,7 @@ def logout():
     session.pop('user',None)
     return "logged out"
 
-@app.route('/')
+@app.route('/check')
 def index():
     user=getUser()
     if user is not None:
@@ -155,6 +127,28 @@ def authorizedGoogle(resp):
     return data
 
 
+@app.route('/')
+@app.route('/home')
+def home():
+    return render_template('home.html') 
 
-if __name__ == '__main__':
-    app.run()
+@app.route('/login')
+def login():
+    return render_template('login.html') 
+
+
+@app.route('/profile')
+def profile():
+     return render_template('profile.html')
+
+
+@app.route('/newpaste')
+def newpaste():
+    return render_template('newpaste.html') 
+
+
+
+
+if __name__ == '__main__' :
+    app.run(debug=True)
+
