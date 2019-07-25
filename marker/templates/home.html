@@ -11,8 +11,11 @@
 
 <h1 align="center"><Strong> Welcome To Pastebin </Strong> </h1>
 <p class="p"> The website is mainly used by programmers to store pieces of sources code or configuration information, but anyone is more than welcome to paste any type of text. The idea behind the site is to make it more convenient for people to share large amounts of text online. Users have the ability to make private pastings, so they are only visible to the people they choose to share their links with.</p>
- 
- <a href="http://127.0.0.1:5000/login" class="button" >login</a>
- <a href="http://127.0.0.1:5000/newpaste" class="button">New Paste</a>
+ {% if loged==True %}
+<a href="http://localhost:5000/profile" class="button" >profile</a>
+ {% else %}
+ <a href="http://localhost:5000/login" class="button" >login</a>
+ {% endif %}
+ <a href="http://localhost:5000/newpaste" class="button">New Paste</a>
 
 {% endblock%}
