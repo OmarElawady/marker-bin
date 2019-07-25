@@ -1,4 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Pastebin</title>
+
 <style>
+
+.navbar a {
+					  float: left;
+					  display: block;
+					  color: white;
+					  text-align: center;
+					  padding: 10px 20px;
+					  text-decoration: none;
+		  }
+
+
+.navbar a.right {
+  					float: right;
+                }
+
+.navbar {
+ 					 overflow: hidden;
+  					background-color: black ;
+        }
+
+
+	body {
+					  font-family: Arial, Helvetica, sans-serif;
+					  margin: 0;
+					  background-size: auto;
+					  background-position: center;
+					  background-repeat: no-repeat;
+     }
+
+.popset{    
+				  text-align: left;
+				  font-size: 25px;
+   }
+
+.mySlides{
+				  display: block;
+				  margin-left: auto;
+				  margin-right: auto;
+
+         }
+
+.button {
+				  background-color: #4CAF50;
+				  border: none;
+				  color: white;		 
+				  padding: 5px;
+			      font-size: 13px;
+			      width: 300px;
+				  text-align: center;
+				  text-decoration: none;
+				  display: block;
+				  font-size: 16px;
+				  margin: 25px 60px;
+				  cursor: pointer;
+	  			  float: right; 
+	  			  transform: translate(-65% , -65%);
+        }
+
+
+.pnewpaste      { 
+				text-align: left;
+			     font-size: 20px;
+
+        }
+
+
+.fa {
+        padding: 5px;
+        font-size: 13px;
+        width: 300px;
+        
+        text-align: center;
+        text-decoration: none;
+        margin: 5px 2px;
+}
+.fa-Git {
+          background: rgba(37, 9, 6, 0.56);
+          color: white;
+}
+
+.fa-google {
+  background: #dd4b39;
+  color: white;
+}
+
+
+.plogin{ 
+	font-size: 20px;
+	text-align: left;
+
+}
+
+
+
+ select {
+		  width: 25%;
+		  padding: 8px 20px;
+		  margin: 12px 17px;
+		  display: inline-block;
+		  text-align: center;
+		}
+
 .highlight .hll { background-color: #ffffcc }
 .highlight  { background: #f8f8f8; }
 .highlight .c { color: #408080; font-style: italic } /* Comment */
@@ -67,13 +174,27 @@
 .highlight .vg { color: #19177C } /* Name.Variable.Global */
 .highlight .vi { color: #19177C } /* Name.Variable.Instance */
 .highlight .vm { color: #19177C } /* Name.Variable.Magic */
-.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long *
+
+
 </style>
 
+</head>
+<body>
 
-<div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
-    <span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
-    <span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;hello world&quot;</span><span class="p">)</span>
-    <span class="p">}</span>
-    </pre></div>
+<div class="header">
+		<div class="navbar">
+			<a href="http://localhost:5000/home">PasteBin</a>
+	        <a href="http://localhost:5000/newpaste">New paste</a>
+	        <a href="http://localhost:5000/login" class="right">user</a>
+            <a href="http://localhost:5000/profile" class="right">MyPastebin</a>
+		 </div>
+
+</div>
+ 		
+
+{% block content %}{% endblock %}
+ 
+
+</body>
+</html>

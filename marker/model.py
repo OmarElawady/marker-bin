@@ -48,7 +48,6 @@ def add_src(src_text, src_language, src_owner_email):
     return src.id
 
 
-
 def get_srcs_by_email(user_email):
     """return list for all the quaries the email has"""
     quaries = Src.select().join(User).where(User.email == user_email)

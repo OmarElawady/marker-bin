@@ -1,39 +1,9 @@
-
 from flask import *
-import json
+import requests
 from flask_oauth import OAuth
-from urllib.request import *
-from urllib.error import *
 from flask_github import GitHub
 from github import Github as git
-from peewee import *
-import pygments
-from pygments.lexers import PythonLexer
-from pygments.formatters import HtmlFormatter
-
-database = SqliteDatabase('app.db')
-
-class BaseMode(Model):
-    class Meta:
-        database = database
-
-class User(BaseMode):
-    username = CharField( unique = True)
-    password = CharField()
-    email = CharField()
-
-class Src(BaseMode):
-    text = TextField()
-    language  = CharField()
-    user = ForeignKeyField(User, backref='srcs')
-
-def create_tables():
-    database.create_tables([User, Src])
-
-def mark(text):
-    #styles >> HtmlFormatter().get_style_defs('.highlight')
-    return pygments.highlight(text, PythonLexer(), HtmlFormatter())
-
+from model import *
 
 # You must configure these 3 values from Google APIs console
 # https://code.google.com/apis/console
@@ -73,41 +43,58 @@ consumer_key=GOOGLE_CLIENT_ID,
 consumer_secret=GOOGLE_CLIENT_SECRET)
 
 def getUser():
-    user = session.get('user')
-    if user is not None:
-        user=json.loads(user.replace('\'','\"'))
-        return user
-    return None
+    return session.get('user')
 
 def getUserName():
-    user=getUser();
+    user=getUser()
     if user is not None:
-        return user['name']
+        return user.get('name')
     return None
 
 def getUserEmail():
-    user=getUser();
+    user=getUser()
     if user is not None:
-        return user['email']
+        return user.get('email')
     return None
 
 def getUserPicture():
-    user=getUser();
+    user=getUser()
     if user is not None:
-        return user['picture']
+        return user.get('picture')
     return None
+
+def checkForUser():
+    if not check_for_user_by_email(getUserEmail()):
+        add_user(getUserName(), ' ', getUserEmail())
 
 @app.route('/logout')
 def logout():
     session.pop('user',None)
     return "logged out"
 
-@app.route('/')
+@app.route('/test')
 def index():
     user=getUser()
     if user is not None:
-        return getUserName()+ getUserEmail()+getUserPicture()
+        return str(getUserName())+ str(getUserEmail())+str(getUserPicture())
     return "None"
+
+@app.route('/loginEmail',methods = ['POST', 'GET'])
+def loginEmail():
+    if request.method=='POST':
+        userEmail=request.form['email']
+        password=request.form['pass']
+        if check_for_user_by_email(userEmail):
+            userName = login_by_email(userEmail, password)
+            if userName is not None:
+                session['user']={'name':userName,'email':userEmail}
+                return redirect(url_for('index'))
+            flash('wrong user or pass try again')
+            return redirect(url_for('loginEmail'))
+        flash('welcome new user')
+        session['user'] = {'email': userEmail,'name':userEmail.split('@')[0]}
+        return redirect(url_for('index'))
+
 
 @app.route('/loginGit')
 def loginGit():
@@ -122,8 +109,9 @@ def authorizedGit(oauth_token):
     g=git(oauth_token)
     user=g.get_user()
     userData={"email":user.get_emails()[0]['email'],"name":user.login,"picture":user.avatar_url}
-    session['user']=str(userData)
-    print( session['user'])
+    print(type(userData))
+    session['user']=userData
+    checkForUser()
     return userData
 
 
@@ -139,22 +127,57 @@ def authorizedGoogle(resp):
     access_token=access_token,''
     access_token = access_token[0]
     headers = {'Authorization': 'OAuth ' + access_token}
-    req = Request('https://www.googleapis.com/oauth2/v1/userinfo',None, headers)
-    try:
-        res = urlopen(req)
-    except URLError as e:
-        return str(e)
-    userData=''
-    for lines in res.readlines():
-        userData+=str(lines)
-    data = userData.replace('b\'', '')
-    data = data.replace('\\n','')
-    data = data.replace('\'', '')
-    print(data)
+    res = requests.get('https://www.googleapis.com/oauth2/v1/userinfo',headers= headers)
+    data=res.json()
     session['user']=data
+    checkForUser()
     return data
 
+@app.route('/')
+@app.route('/home')
+def home():
+    return render_template('home.html') 
+
+@app.route('/login')
+def login():
+    return render_template('login.html') 
 
 
-if __name__ == '__main__':
-    app.run()
+@app.route('/profile')
+def profile():
+     queryList=get_srcs_by_email(session['user']['email'])
+     srcList=[]
+     for q in queryList:
+         print(q)
+         src=get_src_by_id(q)
+         print(src)
+         d={'id':q,'src':src[0],'language':src[1]}
+         srcList.append(d)
+     return render_template('profile.html',list=srcList)
+
+
+@app.route('/newpaste')
+def newpaste():
+    return render_template('newpaste.html') 
+
+@app.route('/addNewPaste',methods = ['POST', 'GET'])
+def addPaste():
+    if request.method=='POST':
+
+        lan=request.form['syntaxhighlighting']
+        src = mark_text(request.form['paste_code'],lan)
+        email=getUserEmail()
+        id=add_src(src,lan,email)
+        return redirect('http://localhost:5000/viewPaste/'+str(id))
+    return 'something went wrong'
+
+@app.route('/viewPaste/<int:srcID>')
+def viewPaste(srcID):
+    src=get_src_by_id(srcID)
+    if src is not None:
+        return render_template('paste.html',src=src[0],lan=src[1])
+
+    return "404 not found"
+if __name__ == '__main__' :
+    app.run(debug=True)
+
