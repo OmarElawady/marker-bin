@@ -3,7 +3,7 @@ import requests
 from flask_oauth import OAuth
 from flask_github import GitHub
 from github import Github as git
-from model.py import *
+from model import *
 
 # You must configure these 3 values from Google APIs console
 # https://code.google.com/apis/console
@@ -65,7 +65,7 @@ def getUserPicture():
 
 def checkForUser():
     if not check_for_user_by_email(getUserEmail()):
-        add_user(getUserName(), None, getUserEmail())
+        add_user(getUserName(), ' ', getUserEmail())
 
 @app.route('/logout')
 def logout():
@@ -76,24 +76,25 @@ def logout():
 def index():
     user=getUser()
     if user is not None:
-        return getUserName()+ getUserEmail()+getUserPicture()
+        return str(getUserName())+ str(getUserEmail())+str(getUserPicture())
     return "None"
 
 @app.route('/loginEmail',methods = ['POST', 'GET'])
 def loginEmail():
     if request.method=='POST':
-        userName=request.form['username']
+        userEmail=request.form['email']
         password=request.form['pass']
-        if check_for_user_by_username(userName):
-            truePass = login_by_username(userName, password)[0]
-            if truePass:
-                session['user']={'name':userName}
+        if check_for_user_by_email(userEmail):
+            userName = login_by_email(userEmail, password)
+            if userName is not None:
+                session['user']={'name':userName,'email':userEmail}
                 return redirect(url_for('index'))
             flash('wrong user or pass try again')
             return redirect(url_for('loginEmail'))
         flash('welcome new user')
-        session['user'] = {'name': userName}
+        session['user'] = {'email': userEmail,'name':userEmail.split('@')[0]}
         return redirect(url_for('index'))
+
 
 @app.route('/loginGit')
 def loginGit():
@@ -144,16 +145,39 @@ def login():
 
 @app.route('/profile')
 def profile():
-     return render_template('profile.html')
+     queryList=get_srcs_by_email(session['user']['email'])
+     srcList=[]
+     for q in queryList:
+         print(q)
+         src=get_src_by_id(q)
+         print(src)
+         d={'id':q,'src':src[0],'language':src[1]}
+         srcList.append(d)
+     return render_template('profile.html',list=srcList)
 
 
 @app.route('/newpaste')
 def newpaste():
     return render_template('newpaste.html') 
 
+@app.route('/addNewPaste',methods = ['POST', 'GET'])
+def addPaste():
+    if request.method=='POST':
 
+        lan=request.form['syntaxhighlighting']
+        src = mark_text(request.form['paste_code'],lan)
+        email=getUserEmail()
+        id=add_src(src,lan,email)
+        return redirect('http://localhost:5000/viewPaste/'+str(id))
+    return 'something went wrong'
 
+@app.route('/viewPaste/<int:srcID>')
+def viewPaste(srcID):
+    src=get_src_by_id(srcID)
+    if src is not None:
+        return render_template('paste.html',src=src[0],lan=src[1])
 
+    return "404 not found"
 if __name__ == '__main__' :
     app.run(debug=True)
 

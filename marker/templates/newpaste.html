@@ -2,8 +2,9 @@
 
 
 {% block content %}
-
+<form action = "http://localhost:5000/addNewPaste" method = "post">
 <div class="pnewpaste" >
+
 <strong><p>New Paste :</p></strong>
 </div>
 
@@ -17,7 +18,8 @@
 <strong><p>Optional Paste Settings :</p></strong>
 </div>
 
-   <label for="syntaxhighlighting"> Syntax Highlighting: </label>
+
+ <label for="syntaxhighlighting"> Syntax Highlighting: </label>
 
     <select id="syntaxhighlighting" name="syntaxhighlighting">
      <option value="">None</option>
@@ -28,10 +30,11 @@
       <option value="CSS">css</option>
       <option value="python">python</option>
       </select>
-   
+
 
      <input type="submit" value="New Paste">
-  </form>
+
 </div>
+    </form>
 
 {% endblock %}

@@ -1,7 +1,18 @@
 {% extends "base.html" %}
 
 
-{% block content%}{% endblock %}
+{% block content %}
+<body>
+
+    {% for i in list %}
+    <p>source code id: {{i['id']}}</p>
+    <p>language: {{i['language']}}</p>
+
+    <a href="http://localhost:5000/viewPaste/{{i['id']}}" class="button">view code</a>
+    <br>
+    {% endfor %}
+</body>
+{% endblock %}
 
 
 
