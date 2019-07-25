@@ -17,7 +17,7 @@ class User(BaseMode):
 class Src(BaseMode):
     text = TextField()
     language  = CharField()
-    owner = ForeignKeyField(User, db_column='owner', related_name='srcs', to_field='email')
+    owner = ForeignKeyField(User, db_column='owner', related_name='srcs', to_field='email', null = True)
 
 def create_tables():
     database.create_tables([User, Src])
