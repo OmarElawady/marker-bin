@@ -45,6 +45,7 @@ def add_src(src_text, src_language, src_owner_email):
     """save source code text in the database"""
     src = Src(text=src_text, language=src_language, owner=src_owner_email)
     src.save()
+    return src.id
 
 
 
