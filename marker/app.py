@@ -45,6 +45,12 @@ consumer_secret=GOOGLE_CLIENT_SECRET)
 def getUser():
     return session.get('user')
 
+def isLogged():
+    loged = True
+    if session.get('user') is None:
+        loged = False
+    return loged
+
 def getUserName():
     user=getUser()
     if user is not None:
@@ -136,11 +142,11 @@ def authorizedGoogle(resp):
 @app.route('/')
 @app.route('/home')
 def home():
-    return render_template('home.html') 
+    return render_template('home.html',loged=isLogged())
 
 @app.route('/login')
 def login():
-    return render_template('login.html') 
+    return render_template('login.html',loged=isLogged())
 
 
 @app.route('/profile')
@@ -153,12 +159,12 @@ def profile():
          print(src)
          d={'id':q,'src':src[0],'language':src[1]}
          srcList.append(d)
-     return render_template('profile.html',list=srcList)
+     return render_template('profile.html',list=srcList,loged=isLogged())
 
 
 @app.route('/newpaste')
 def newpaste():
-    return render_template('newpaste.html') 
+    return render_template('newpaste.html',loged=isLogged())
 
 @app.route('/addNewPaste',methods = ['POST', 'GET'])
 def addPaste():
@@ -175,7 +181,7 @@ def addPaste():
 def viewPaste(srcID):
     src=get_src_by_id(srcID)
     if src is not None:
-        return render_template('paste.html',src=src[0],lan=src[1])
+        return render_template('paste.html',src=src[0],lan=src[1],loged=isLogged())
 
     return "404 not found"
 if __name__ == '__main__' :
